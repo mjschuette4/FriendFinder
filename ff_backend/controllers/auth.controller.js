@@ -1,6 +1,6 @@
 const User = require('../models/auth.model')
 const expressJwt = require('express-jwt')
-const _ = require('loadash')
+const _ = require('lodash')
 const { OAuth2Client } = require('google-auth-library')
 const fetch = require('node-fetch')
 const {validationResult} = require('express-validator')
@@ -13,7 +13,7 @@ exports.registerController = (req, res) => {
     const { name, email, password } = req.body
     const errors = validationResult(req)
 
-    if (!errors.isEmpty()) {
+    if(!errors.isEmpty()) {
         const firstError = errors.array().map(error => error.msg)[0]
         return res.status(422).json({
             error: firstError
@@ -28,20 +28,18 @@ exports.registerController = (req, res) => {
                 })
             }
         })
-        const token = jwt.sign(
-            {
+        const token = jwt.sign({
                 name,
                 email,
                 password
             },
-            process.env.JWT_ACCOUNT_ACTIVATION,
-            {
+            process.env.JWT_ACCOUNT_ACTIVATION,{
                 expiresIn: '15m'
             } 
         )
 
         const emailData = {
-            from : process.env.EMAIL_FROM,
+            from: process.env.EMAIL_FROM,
             to: to,
             subject: 'Account activation link',
             html: `
@@ -49,8 +47,18 @@ exports.registerController = (req, res) => {
                 <p>${process.env.CLIENT_URL}/users/activate/${token}</p>
                 <hr/>
                 <p>This emali contais sensitive information</p>
-                <p>${process.env.Client_URL}</p>
+                <p>${process.env.CLIENT_URL}</p>
             `
         }
+
+        sgMail.send(emailData).then(sent => {
+            return res.json({
+                message:`Email has been sent to ${email}`
+            })
+        }).catch(err =>{
+            return res.status(400).json({
+                error:errorHandler(err)
+            })
+        })
     }
 }

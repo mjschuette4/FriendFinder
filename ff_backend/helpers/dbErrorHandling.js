@@ -1,12 +1,12 @@
 "use strict"
 
-const uniqueMessage = eror => {
-    let output
+const uniqueMessage = error => {
+    let output;
     try {
         let fieldName = error.message.split(".$")[1]
         field = field.split(" dub key")[0]
         field = field.substring(0, field.lastIndexOf("_"))
-        requestAnimationFrame.flash("errors", [{
+        req.flash("errors", [{
             message: "An account with this " + field + "already exists"
         }])
 
@@ -15,7 +15,7 @@ const uniqueMessage = eror => {
         output = "already exists"
     }
     return output
-}
+};
 
 exports.errorHandler = error => {
     let message = ""
@@ -35,4 +35,4 @@ exports.errorHandler = error => {
         }
     }
     return message
-}
+};
