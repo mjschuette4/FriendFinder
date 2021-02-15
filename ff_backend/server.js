@@ -1,28 +1,20 @@
 const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
 
 //Allows the use of our dotenv file
-require('dotenv').config();
+require('dotenv').config({
+    path: './config/config.env'
+});
 
 //Sets up our port
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 //middleware and allow us to parse json
 app.use(cors());
 app.use(express.json());
-
-//connecting mongoose db
-const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
-);
-const connection = mongoose.connection;
-connection.once('open', () => {
-    console.log(`MongoDB database connection established sucessfully`);
-})
-
-//routes
 
 
 app.listen(port, () => {
