@@ -22,12 +22,14 @@ exports.registerController = (req, res) => {
         User.findOne({
             email
         }).exec((err, user) => {
+            //If the user exists
             if (user) {
                 return res.status(400).json ({
                     error: "Email is taken"
                 })
             }
         })
+        //generate token
         const token = jwt.sign({
                 name,
                 email,
@@ -39,14 +41,15 @@ exports.registerController = (req, res) => {
         )
 
         const emailData = {
+            to: email,
             from: process.env.EMAIL_FROM,
-            to: to,
             subject: 'Account activation link',
+            text: 'test 1,2,3',
             html: `
                 <h1>Please Click the link to activate</h1>
                 <p>${process.env.CLIENT_URL}/users/activate/${token}</p>
                 <hr/>
-                <p>This emali contais sensitive information</p>
+                <p>This email contains sensitive information</p>
                 <p>${process.env.CLIENT_URL}</p>
             `
         }
@@ -57,7 +60,7 @@ exports.registerController = (req, res) => {
             })
         }).catch(err =>{
             return res.status(400).json({
-                error:errorHandler(err)
+                error:err
             })
         })
     }
