@@ -65,3 +65,35 @@ exports.registerController = (req, res) => {
         })
     }
 }
+
+//activation and save to db
+exports.activationController = (req, res) => {
+    const {token} = req.body
+
+    if (token) {
+        //verify token is not expired
+        jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION,
+            (err, decoded) => {
+                if(err) {
+                    return res.status(401).json({
+                        error: 'Link has expired. Signup again'
+                    })
+                }
+            })
+    } else {
+        //if valid then save to db
+        const {name, email, password} = jwt.decode(token)
+
+        const user = new User({
+            name, 
+            email,
+            password
+        })
+
+        user.save((err,user) => {
+            return res.status(401).json({
+                error: err
+            })
+        })
+    }
+}
